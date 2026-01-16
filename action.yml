@@ -1,0 +1,55 @@
+name: 'Depaxiom Scan'
+description: 'Scan dependencies for compositional vulnerabilities that npm audit misses'
+author: 'Depaxiom'
+
+branding:
+  icon: 'shield'
+  color: 'orange'
+
+# Required permissions (set these in your workflow file):
+#
+#   permissions:
+#     contents: read          # Read lockfiles from repository
+#     pull-requests: write    # Post PR comments (if comment-on-pr: true)
+#     security-events: write  # Upload SARIF (if upload-sarif: true)
+#
+# For least privilege, use 'read' for security-events if you don't need SARIF upload.
+
+inputs:
+  api-key:
+    description: 'Depaxiom API key'
+    required: true
+  fail-on-critical:
+    description: 'Fail the workflow if critical vulnerabilities are found'
+    required: false
+    default: 'true'
+  fail-on-high:
+    description: 'Fail the workflow if high severity vulnerabilities are found'
+    required: false
+    default: 'false'
+  comment-on-pr:
+    description: 'Post scan results as a PR comment'
+    required: false
+    default: 'true'
+  upload-sarif:
+    description: 'Upload SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'false'
+  working-directory:
+    description: 'Directory containing lockfiles (defaults to repo root)'
+    required: false
+    default: '.'
+
+outputs:
+  critical-count:
+    description: 'Number of critical vulnerabilities found'
+  high-count:
+    description: 'Number of high severity vulnerabilities found'
+  total-count:
+    description: 'Total number of vulnerabilities found'
+  sarif-file:
+    description: 'Path to generated SARIF file (if upload-sarif is true)'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
