@@ -46613,8 +46613,9 @@ function createOutputFormatter() {
      * Format a concise check summary
      */
     function formatCheckSummary(response) {
-        const { findings, meta } = response;
-        if (findings.length === 0) {
+        const { findings, skeletonKeyMatches, meta } = response;
+        const totalVulns = findings.length + skeletonKeyMatches.length;
+        if (totalVulns === 0) {
             return `✅ Scan passed - ${meta.packagesScanned} packages scanned, no vulnerabilities found`;
         }
         const counts = {
@@ -46626,6 +46627,11 @@ function createOutputFormatter() {
         for (const finding of findings) {
             if (finding.severity !== 'INFO') {
                 counts[finding.severity]++;
+            }
+        }
+        for (const match of skeletonKeyMatches) {
+            if (match.severity !== 'INFO') {
+                counts[match.severity]++;
             }
         }
         let summary = '⚠️ Vulnerabilities found: ';
